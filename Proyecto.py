@@ -4,9 +4,9 @@
 #pip install vc2
 #pip install pillow
 
-import cv2, os, inspect, time
+import cv2, os, inspect, time, webbrowser, json
 # LOCAL
-import detect_faces
+import compare_faces, detect_faces, manage_group, manage_person
 
 # -----------------------------------------
 TOTAL_PHOTOS = 5                            # Fotos en memoria
@@ -26,6 +26,7 @@ capture = cv2.VideoCapture(0)
 def main(limit, interval):
 
     limit -= 1
+    group = 'semanai'
 
     # Changeable variable according to desired time
     INITIAL = int(time.time())
@@ -48,12 +49,35 @@ def main(limit, interval):
 
         if (delta % interval == 0):
 
-            filename = imgPATH + "image_" + str(delta / interval) + ".jpg"      #Otorga un nombre de archivo
+            # Otorga un nombre de archivo
+            filename = imgPATH + "image_" + str(delta / interval) + ".jpg"
             cv2.imwrite(filename, frame)
 
-            infoPhoto = detect_faces.readFace(filename)     #Otorga un face Id y respectivas caracteristicas del rostro
+            # Otorga un face Id y respectivas caracteristicas del rostro
+            infoPhoto = detect_faces.readFace(filename)
             print infoPhoto
 
+            #Se asigna a Id la variable faceID
+            id = infoPhoto[0]['faceId']
+
+            #Se crea lista
+            lista = (manage_person.listPersonsinGroup())
+            print (len(lista))
+
+            #Añade al grupo el rostro si este no se encuentra en él
+            j = 0
+            for i in range(0, len(lista), 1):
+                body = {}
+                body['personId'] = lista[i]['personId']
+                body['faceId'] = id
+                body['personGroupId'] = group
+                js = json.dumps(body, sort_keys=True)
+                if (compare_faces.verify(js)['isIdentical'] == False):
+                    dataPerson = {}
+                    dataPerson['name'] = 'anon' + j
+                    jsonpr = json.dumps(dataPerson)
+                    print manage_person.createPerson(jsonpr)
+                    j = j + 1
 
     capture.release()
 
