@@ -22,7 +22,7 @@ vidPATH = PATH + "/Videos/"
 capture = cv2.VideoCapture(0)
 
 
-# Record from live video
+#Procesa Caras a partir de video
 def main(limit, interval):
 
     limit -= 1
@@ -30,6 +30,7 @@ def main(limit, interval):
     # Changeable variable according to desired time
     INITIAL = int(time.time())
 
+    #Ciclo donde se mantiene el video activo
     while capture.isOpened():
 
         infoPhoto = ""
@@ -47,12 +48,11 @@ def main(limit, interval):
 
         if (delta % interval == 0):
 
-            filename = imgPATH + "image_" + str(delta / interval) + ".jpg"
+            filename = imgPATH + "image_" + str(delta / interval) + ".jpg"      #Otorga un nombre de archivo
             cv2.imwrite(filename, frame)
 
-            infoPhoto = detect_faces.readFace(filename)
-
-        print infoPhoto
+            infoPhoto = detect_faces.readFace(filename)     #Otorga un face Id y respectivas caracteristicas del rostro
+            print infoPhoto
 
 
     capture.release()
