@@ -12,6 +12,7 @@ import compare_faces, detect_faces, manage_person
 TOTAL_PHOTOS = 5                            # Fotos en memoria
 FperM = 20                                  # Fotos por minuto
 INTERVAL = 60 / FperM                       # Intervalo entre fotos
+GROUP = 'cmanai'
 # -----------------------------------------
 
 PATH = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -26,7 +27,6 @@ capture = cv2.VideoCapture(0)
 def main(limit, interval):
 
     limit -= 1
-    group = 'cmanai'
 
     # Changeable variable according to desired time
     INITIAL = int(time.time())
@@ -71,11 +71,11 @@ def main(limit, interval):
             #Añade al grupo el rostro si este no se encuentra en él
             j = 0
             finded = False
-            for i in range(0, len(lista), 1):
+            for i in range(0, len(lista)):
                 body = {}
                 body['personId'] = lista[i]['personId']
                 body['faceId'] = id
-                body['personGroupId'] = group
+                body['personGroupId'] = GROUP
                 js = json.dumps(body, sort_keys=True)
 
                 print ">>> " + js

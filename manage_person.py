@@ -5,8 +5,13 @@ import detect_faces, httplib, urllib, json
 #listPersonsinGroup
 #addPersonFace
 
+headers = {
+    'Content-Type': 'application/json',
+    'Ocp-Apim-Subscription-Key': detect_faces.subscription_key,
+}
+
 params = urllib.urlencode({
-    'personGroupId' : 'semanai'
+    'personGroupId' : 'cmanai'
 })
 
 listparams = urllib.urlencode({
@@ -16,7 +21,7 @@ listparams = urllib.urlencode({
 })
 
 getpersonparams = urllib.urlencode({
-    'personGroupId' : 'cmanai',
+    'personGroupId' : 'cmanai'
     #'personId': '30d01b70-e147-4a3a-b77b-37a15c44ece7'
 })
 
@@ -24,7 +29,7 @@ def createPerson(body):
     try:
         # Execute the REST API call and get the response.
         conn = httplib.HTTPSConnection('westcentralus.api.cognitive.microsoft.com')
-        conn.request("POST", "/face/v1.0/persongroups/{personGroupId}/persons?%s" % params, body, detect_faces.headers)
+        conn.request("POST", "/face/v1.0/persongroups/{personGroupId}/persons?%s" % params, body, headers)
         response = conn.getresponse()
         data = response.read()
 
