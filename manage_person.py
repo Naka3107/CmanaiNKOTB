@@ -89,7 +89,7 @@ def listPersonsinGroup():
         print (json.dumps(parsed, sort_keys=True, indent=2))
 
         # result = (json.dumps(parsed, sort_keys=True, indent=2))
-
+        return parsed
         # print ("Se ha agregado el grupo")
 
         conn.close()
