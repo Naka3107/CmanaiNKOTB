@@ -1,4 +1,4 @@
-import detect_faces, httplib, urllib, json
+import detect_faces, httplib
 def deletePerson(person,group,body):
     try:
         conn = httplib.HTTPSConnection('westcentralus.api.cognitive.microsoft.com')
