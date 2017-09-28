@@ -89,7 +89,7 @@ def main(limit, interval):
                 preventError(found)
                 if found:
                     #Elimina del grupo a la persona que relacionó con el rostro
-                    manage_person.deletePerson(body['personId'],GROUP)
+                    manage_person.deletePerson(body['personId'], GROUP)
                     break
 
             personidpo = ''
@@ -101,9 +101,10 @@ def main(limit, interval):
                 preventError(personidpo)
                 print (personidpo['personId'])
                 image = {}
-                image['url'] = filename
+                image['url'] = 'https://pixel.nymag.com/imgs/daily/vulture/2017/06/20/20-gal-gadot.w710.h473.jpg'
+                img = json.dumps(image)
                 # debbie = json.dumps(image)
-                result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', filename)
+                result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', img)
                 print result
                 preventError(result)
 
@@ -111,7 +112,8 @@ def main(limit, interval):
     capture.release()
 
 def clean():
-    manage_person.deletePerson('c5bb36fc-302d-4d95-b1f0-286c254874d8', GROUP,GROUP[2])
+    result = manage_person.deletePerson('41082598-041b-41eb-8e12-3a227914b977', GROUP)
+    preventError(result)
 
 def print_list():
     manage_person.listPersonsinGroup()
@@ -150,7 +152,7 @@ def test():
     # preventError(result)
 
 #main(TOTAL_PHOTOS, INTERVAL)
-#clean()
+# clean()
 print_list()
 #test()
 
