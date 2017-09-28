@@ -114,6 +114,9 @@ def clean():
     result = manage_person.deletePerson('c3c4091d-1d64-41e6-93ef-0216846f638f', GROUP)
     preventError(result)
 
+def print_list():
+    manage_person.listPersonsinGroup()
+
 def preventError(error):
 
     try:
@@ -147,7 +150,8 @@ def test():
     # result = manage_person.deletePerson(personidpo['personId'], GROUP)
     # preventError(result)
 
-main(TOTAL_PHOTOS, INTERVAL)
-clean()
+#main(TOTAL_PHOTOS, INTERVAL)
+#clean()
+print_list()
 #test()
 
