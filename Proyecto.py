@@ -36,6 +36,7 @@ def main(limit, interval):
 
         infoPhoto = ""
 
+
         # Current frame number
         delta = int(time.time()) - INITIAL
 
@@ -67,40 +68,36 @@ def main(limit, interval):
             id = infoPhoto[0]['faceId']
             print "¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨"
             print id
+            #manage_person.addPersonFace(id, GROUP, filename)
             #Se crea lista
             lista = (manage_person.listPersonsinGroup())
             print (len(lista))
 
             #Añade al grupo el rostro si este no se encuentra en él
-            j = 0
-            found = False
-            for i in range(0, len(lista), 1):
-                body = {}
-                body['personId'] = lista[i]['personId']
-                body['faceId'] = id
-                body['personGroupId'] = GROUP
-                js = json.dumps(body, sort_keys=True)
+        finded = False
+        for i in range(0, len(lista), 1):
+            body = {}
+            body['personId'] = lista[i]['personId']
+            body['faceId'] = id
+            body['personGroupId'] = GROUP
+            js = json.dumps(body, sort_keys=True)
 
-                print ">>> " + js
-                print compare_faces.verify(js)
-                print "~~~~~"
+            finded = (compare_faces.verify(js)['isIdentical'])
+            if finded:
+                break
 
-                found = (compare_faces.verify(js)['isIdentical'])
-                if found:
-                    break
+        personidpo = ''
+        if not finded:
+            dataPerson = {}
+            dataPerson['name'] = "Debbie<3"
+            jsonpr = json.dumps(dataPerson)
+            personidpo = manage_person.createPerson(jsonpr)
+            print (personidpo['personId'])
+            image = {}
+            image['url'] = filename
+            debbie = json.dumps(image)
+            manage_person.addPersonFace(personidpo['personId'], 'cmanai', debbie)
 
-
-            if not found:
-                dataPerson = {}
-                dataPerson['name'] = 'anon' + str(j)
-                jsonpr = json.dumps(dataPerson)
-                nP =  manage_person.createPerson(jsonpr)
-                newPerson = {}
-                newPerson['url'] = filename
-                jsonNP = json.dumps(newPerson)
-                dataPerson['persistedFaceIds'] = manage_person.addPersonFace(nP['personId'],GROUP,jsonNP)
-
-                j = j + 1
 
     capture.release()
 

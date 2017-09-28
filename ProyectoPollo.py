@@ -60,7 +60,6 @@ def main():
 
         jsonFoto1 = "{'url':'" + foto1 + "'}"
         jsonFoto2 = "{'url':'" + foto2 + "'}"
-        print "HHHHHHHHHHHHHHHHHHHH"
         print jsonFoto2
 
     #infoPhoto1 = detect_faces.readFace(jsonFoto1, isURL)

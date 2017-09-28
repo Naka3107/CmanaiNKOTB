@@ -41,7 +41,7 @@ def createPerson(body):
         # result = (json.dumps(parsed, sort_keys=True, indent=2))
 
         print ("Se ha creado la persona")
-
+        return parsed
         conn.close()
 
     except Exception as e:
@@ -112,7 +112,7 @@ def addPersonFace(person, group, body):
         print (json.dumps(parsed, sort_keys=True, indent=2))
         print "Se asigno cara a la persona"
         # result = (json.dumps(parsed, sort_keys=True, indent=2))
-
+        return parsed
         # print ("Se ha agregado el grupo")
 
         conn.close()
