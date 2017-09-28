@@ -132,16 +132,14 @@ def addPersonFace(person, group, path):
         # print "Error adding a new face from: " + filename
         print("[Errno {0}] {1}".format(e.message, e.args))
 
-def deletePerson(person, group):
+def deletePerson(person,group,body):
     try:
         conn = httplib.HTTPSConnection('westcentralus.api.cognitive.microsoft.com')
-        conn.request("DELETE", "/face/v1.0/persongroups/"+group+"/persons/"+person+"?%s" % None, None, detect_faces.headers)
+        conn.request("DELETE", "/face/v1.0/persongroups/"+group+"/persons/"+person+"?%s" % None, body, detect_faces.headers)
         response = conn.getresponse()
         data = response.read()
-
         print(data)
         conn.close()
         print("Borrado")
-
     except Exception as e:
-        print("[Errno {0}] {1}".format(e.message, e.args))
+        print("[Errno {0}] {1}".format(e.errno, e.strerror))

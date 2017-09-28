@@ -112,8 +112,7 @@ def main(limit, interval):
     capture.release()
 
 def clean():
-    result = manage_person.deletePerson('41082598-041b-41eb-8e12-3a227914b977', GROUP)
-    preventError(result)
+    manage_person.deletePerson('56479bb9-20c8-46b2-ba13-df9d7a17044a', GROUP,GROUP[2])
 
 def print_list():
     manage_person.listPersonsinGroup()
@@ -152,7 +151,7 @@ def test():
     # preventError(result)
 
 #main(TOTAL_PHOTOS, INTERVAL)
-# clean()
-print_list()
+clean()
+#print_list()
 #test()
 
