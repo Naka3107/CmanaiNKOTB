@@ -49,6 +49,8 @@ def main(limit, interval):
 
         if (delta % interval == 0):
 
+        # ***************************Analisis de imagen**************************************
+
             # Otorga un nombre de archivo
             filename = imgPATH + "image_" + str(delta / interval) + ".jpg"
             cv2.imwrite(filename, frame)
@@ -59,19 +61,20 @@ def main(limit, interval):
             print "Análisis de cara: "
             print infoPhoto
 
-        # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        # ********************Procesamiento de imagen****************************************
 
             #Se asigna a Id la variable faceID
             id = infoPhoto[0]['faceId']
-
+            print "¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨"
+            print id
             #Se crea lista
             lista = (manage_person.listPersonsinGroup())
             print (len(lista))
 
             #Añade al grupo el rostro si este no se encuentra en él
             j = 0
-            finded = False
-            for i in range(0, len(lista)):
+            found = False
+            for i in range(0, len(lista), 1):
                 body = {}
                 body['personId'] = lista[i]['personId']
                 body['faceId'] = id
@@ -82,16 +85,21 @@ def main(limit, interval):
                 print compare_faces.verify(js)
                 print "~~~~~"
 
-                finded = (compare_faces.verify(js)['isIdentical'])
-                if finded:
+                found = (compare_faces.verify(js)['isIdentical'])
+                if found:
                     break
 
 
-            if not finded:
+            if not found:
                 dataPerson = {}
                 dataPerson['name'] = 'anon' + str(j)
                 jsonpr = json.dumps(dataPerson)
-                print manage_person.createPerson(jsonpr)
+                nP =  manage_person.createPerson(jsonpr)
+                newPerson = {}
+                newPerson['url'] = filename
+                jsonNP = json.dumps(newPerson)
+                dataPerson['persistedFaceIds'] = manage_person.addPersonFace(nP['personId'],GROUP,jsonNP)
+
                 j = j + 1
 
     capture.release()

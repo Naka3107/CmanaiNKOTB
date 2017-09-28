@@ -40,7 +40,7 @@ def createPerson(body):
 
         # result = (json.dumps(parsed, sort_keys=True, indent=2))
 
-        print ("Se ha agregado el grupo")
+        print ("Se ha creado la persona")
 
         conn.close()
 
@@ -110,7 +110,7 @@ def addPersonFace(person, group, body):
         parsed = json.loads(data)
         print ("<<ADD PERSON FACE>> Response:")
         print (json.dumps(parsed, sort_keys=True, indent=2))
-
+        print "Se asigno cara a la persona"
         # result = (json.dumps(parsed, sort_keys=True, indent=2))
 
         # print ("Se ha agregado el grupo")

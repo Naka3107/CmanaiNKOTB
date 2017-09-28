@@ -7,7 +7,7 @@ subscription_key = '4c9d869cdd3a4adba127a880088daac4'
 # Request headers.
 headers = {
     'Content-Type': 'application/octet-stream',
-    'Ocp-Apim-Subscription-Key': subscription_key,
+    'Ocp-Apim-Subscription-Key': subscription_key
 }
 
 # Request parameters.
