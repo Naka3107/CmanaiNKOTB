@@ -50,7 +50,7 @@ def getGroup():
 
         # 'data' contains the JSON data. The following formats the JSON data for display.
         parsed = json.loads(data)
-        print ("Response:")
+        print ("<<GET GROUP>> Response:")
         print (json.dumps(parsed, sort_keys=True, indent=2))
 
         # result = (json.dumps(parsed, sort_keys=True, indent=2))
@@ -96,7 +96,7 @@ def listGroup():
 
         # 'data' contains the JSON data. The following formats the JSON data for display.
         parsed = json.loads(data)
-        print ("Response:")
+        print ("<<LIST GROUP>> Response:")
         print (json.dumps(parsed, sort_keys=True, indent=2))
 
         # result = (json.dumps(parsed, sort_keys=True, indent=2))

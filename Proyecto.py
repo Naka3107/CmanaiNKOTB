@@ -4,9 +4,9 @@
 #pip install vc2
 #pip install pillow
 
-import cv2, os, inspect, time, webbrowser, json
+import cv2, os, inspect, time, json
 # LOCAL
-import compare_faces, detect_faces, manage_group, manage_person
+import compare_faces, detect_faces, manage_person
 
 # -----------------------------------------
 TOTAL_PHOTOS = 5                            # Fotos en memoria
@@ -22,16 +22,16 @@ vidPATH = PATH + "/Videos/"
 capture = cv2.VideoCapture(0)
 
 
-#Procesa Caras a partir de video
+# Procesa Caras a partir de video
 def main(limit, interval):
 
     limit -= 1
-    group = 'semanai'
+    group = 'cmanai'
 
     # Changeable variable according to desired time
     INITIAL = int(time.time())
 
-    #Ciclo donde se mantiene el video activo
+    # Ciclo donde se mantiene el video activo
     while capture.isOpened():
 
         infoPhoto = ""
@@ -52,10 +52,14 @@ def main(limit, interval):
             # Otorga un nombre de archivo
             filename = imgPATH + "image_" + str(delta / interval) + ".jpg"
             cv2.imwrite(filename, frame)
+            print "Fotografía guardada en: " + filename
 
             # Otorga un face Id y respectivas caracteristicas del rostro
             infoPhoto = detect_faces.readFace(filename)
+            print "Análisis de cara: "
             print infoPhoto
+
+        # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
             #Se asigna a Id la variable faceID
             id = infoPhoto[0]['faceId']
@@ -66,18 +70,29 @@ def main(limit, interval):
 
             #Añade al grupo el rostro si este no se encuentra en él
             j = 0
+            finded = False
             for i in range(0, len(lista), 1):
                 body = {}
                 body['personId'] = lista[i]['personId']
                 body['faceId'] = id
                 body['personGroupId'] = group
                 js = json.dumps(body, sort_keys=True)
-                if (compare_faces.verify(js)['isIdentical'] == False):
-                    dataPerson = {}
-                    dataPerson['name'] = 'anon' + j
-                    jsonpr = json.dumps(dataPerson)
-                    print manage_person.createPerson(jsonpr)
-                    j = j + 1
+
+                print ">>> " + js
+                print compare_faces.verify(js)
+                print "~~~~~"
+
+                finded = (compare_faces.verify(js)['isIdentical'])
+                if finded:
+                    break
+
+
+            if not finded:
+                dataPerson = {}
+                dataPerson['name'] = 'anon' + str(j)
+                jsonpr = json.dumps(dataPerson)
+                print manage_person.createPerson(jsonpr)
+                j = j + 1
 
     capture.release()
 

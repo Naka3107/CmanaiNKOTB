@@ -30,7 +30,7 @@ def createPerson(body):
 
         # 'data' contains the JSON data. The following formats the JSON data for display.
         parsed = json.loads(data)
-        print ("Response:")
+        print ("<<CREATE PERSON>> Response:")
         print (json.dumps(parsed, sort_keys=True, indent=2))
 
         # result = (json.dumps(parsed, sort_keys=True, indent=2))
@@ -54,7 +54,7 @@ def getPerson():
 
         # 'data' contains the JSON data. The following formats the JSON data for display.
         parsed = json.loads(data)
-        print ("Response:")
+        print ("<<GET PERSON>> Response:")
         print (json.dumps(parsed, sort_keys=True, indent=2))
 
         # result = (json.dumps(parsed, sort_keys=True, indent=2))
@@ -77,7 +77,7 @@ def listPersonsinGroup():
 
         # 'data' contains the JSON data. The following formats the JSON data for display.
         parsed = json.loads(data)
-        print ("Response:")
+        print ("<<LIST PERSON IN GROUP>> Response:")
         print (json.dumps(parsed, sort_keys=True, indent=2))
 
         return parsed
@@ -103,7 +103,7 @@ def addPersonFace(person, group, body):
 
         # 'data' contains the JSON data. The following formats the JSON data for display.
         parsed = json.loads(data)
-        print ("Response:")
+        print ("<<ADD PERSON FACE>> Response:")
         print (json.dumps(parsed, sort_keys=True, indent=2))
 
         # result = (json.dumps(parsed, sort_keys=True, indent=2))

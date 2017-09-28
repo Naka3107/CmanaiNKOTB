@@ -29,6 +29,8 @@ def readFace(path):
     f.close()
 
     try:
+        print "Analizando cara..."
+
         # Execute the REST API call and get the response.
         conn = httplib.HTTPSConnection('westcentralus.api.cognitive.microsoft.com')
         conn.request("POST", "/face/v1.0/detect?%s" % params, body, headers)
