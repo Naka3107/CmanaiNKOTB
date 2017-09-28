@@ -63,7 +63,7 @@ def main(limit, interval):
             print "Análisis de cara: "
             print infoPhoto
 
-        # ********************Procesamiento de imagen****************************************
+        # *************************Procesamiento de imagen***********************************
 
             #Se asigna a Id la variable faceID
 
@@ -111,8 +111,7 @@ def main(limit, interval):
     capture.release()
 
 def clean():
-    result = manage_person.deletePerson('c3c4091d-1d64-41e6-93ef-0216846f638f', GROUP)
-    preventError(result)
+    manage_person.deletePerson('c5bb36fc-302d-4d95-b1f0-286c254874d8', GROUP,GROUP[2])
 
 def print_list():
     manage_person.listPersonsinGroup()
