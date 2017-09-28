@@ -1,3 +1,5 @@
+#coding: UTF-8
+
 import detect_faces, httplib, urllib, json
 #Metodos:
 #verify

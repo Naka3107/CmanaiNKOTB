@@ -1,3 +1,5 @@
+#coding: UTF-8
+
 import detect_faces, httplib, urllib, json
 #Metodos:
 #createPerson
@@ -85,8 +87,6 @@ def listPersonsinGroup():
         print ("<<LIST PERSON IN GROUP>> Response:")
         print (json.dumps(parsed, sort_keys=True, indent=2))
 
-        return parsed
-
         # result = (json.dumps(parsed, sort_keys=True, indent=2))
 
         # print ("Se ha agregado el grupo")
@@ -97,14 +97,24 @@ def listPersonsinGroup():
         print("[Errno {0}] {1}".format(e.message, e.args))
 
 
-def addPersonFace(person, group, body):
+def addPersonFace(person, group, path):
+
+    filename = path
+    f = open(filename, "rb")
+    body = f.read()
+
+    f.close()
+
     try:
+        print "entra"
         # Execute the REST API call and get the response.
         conn = httplib.HTTPSConnection('westcentralus.api.cognitive.microsoft.com')
         conn.request("POST", "/face/v1.0/persongroups/" + group + "/persons/" + person + "/persistedFaces?%s" % None,
                      body, detect_faces.headers)
+        print "manda"
         response = conn.getresponse()
         data = response.read()
+        print "recibe"
 
         # 'data' contains the JSON data. The following formats the JSON data for display.
         parsed = json.loads(data)
@@ -118,4 +128,21 @@ def addPersonFace(person, group, body):
         conn.close()
 
     except Exception as e:
+        print "Error adding a new face in: " + filename
         print("[Errno {0}] {1}".format(e.message, e.args))
+
+def deletePerson(person, group):
+    try:
+        conn = httplib.HTTPSConnection('westcentralus.api.cognitive.microsoft.com')
+        conn.request("DELETE", "/face/v1.0/persongroups/"+group+"/persons/"+person+"?%s" % None, '{}', detect_faces.headers)
+        response = conn.getresponse()
+        data = response.read()
+
+        parsed = json.loads(data)
+
+        conn.close()
+        print("Borrado")
+        return parsed
+
+    except Exception as e:
+        print("[Errno {0}] {1}".format(e.errno, e.strerror))

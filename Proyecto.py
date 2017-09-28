@@ -10,7 +10,7 @@ import compare_faces, detect_faces, manage_person
 
 # -----------------------------------------
 TOTAL_PHOTOS = 5                            # Fotos en memoria
-FperM = 20                                  # Fotos por minuto
+FperM = 10                                  # Fotos por minuto
 INTERVAL = 60 / FperM                       # Intervalo entre fotos
 GROUP = 'cmanai'
 # -----------------------------------------
@@ -21,6 +21,7 @@ imgPATH = PATH + "/Images/"
 vidPATH = PATH + "/Videos/"
 
 capture = cv2.VideoCapture(0)
+limitReached = False
 
 
 # Procesa Caras a partir de video
@@ -35,7 +36,6 @@ def main(limit, interval):
     while capture.isOpened():
 
         infoPhoto = ""
-
 
         # Current frame number
         delta = int(time.time()) - INITIAL
@@ -59,22 +59,25 @@ def main(limit, interval):
 
             # Otorga un face Id y respectivas caracteristicas del rostro
             infoPhoto = detect_faces.readFace(filename)
+            preventError(infoPhoto)
             print "Análisis de cara: "
             print infoPhoto
 
         # ********************Procesamiento de imagen****************************************
 
             #Se asigna a Id la variable faceID
+
+        if len(infoPhoto) > 0:
             id = infoPhoto[0]['faceId']
             print "¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨"
             print id
             #manage_person.addPersonFace(id, GROUP, filename)
             #Se crea lista
             lista = (manage_person.listPersonsinGroup())
-            print (len(lista))
+            preventError(lista)
 
             #Añade al grupo el rostro si este no se encuentra en él
-        finded = False
+        found = False
         for i in range(0, len(lista), 1):
             body = {}
             body['personId'] = lista[i]['personId']
@@ -82,23 +85,64 @@ def main(limit, interval):
             body['personGroupId'] = GROUP
             js = json.dumps(body, sort_keys=True)
 
-            finded = (compare_faces.verify(js)['isIdentical'])
-            if finded:
+            found = (compare_faces.verify(js)['isIdentical'])
+            preventError(found)
+            if found:
                 break
 
         personidpo = ''
-        if not finded:
+        if not found:
             dataPerson = {}
             dataPerson['name'] = "Debbie<3"
             jsonpr = json.dumps(dataPerson)
             personidpo = manage_person.createPerson(jsonpr)
+            preventError(personidpo)
             print (personidpo['personId'])
             image = {}
             image['url'] = filename
-            debbie = json.dumps(image)
-            manage_person.addPersonFace(personidpo['personId'], 'cmanai', debbie)
+            # debbie = json.dumps(image)
+            result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', filename)
+            preventError(result)
 
 
     capture.release()
 
-main(TOTAL_PHOTOS, INTERVAL)
+def clean():
+    result = manage_person.deletePerson('e19a92c2-b186-44b5-9e0f-005aa9694aad', GROUP)
+    preventError(result)
+
+def preventError(error):
+
+    try:
+        message = error['error']['message']
+
+        if message == 'Rate limit is exceeded. Try again later.':
+            time.sleep(30)
+    except Exception as e:
+        print "Respuesta sin error"
+
+def test():
+
+    print "ANTES"
+    print manage_person.listPersonsinGroup()
+
+    dataPerson = {}
+    dataPerson['name'] = "TEST"
+    jsonpr = json.dumps(dataPerson)
+    personidpo = manage_person.createPerson(jsonpr)
+    preventError(personidpo)
+
+    result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', imgPATH + "c2.jpg")
+    preventError(result)
+
+    print "DESPUES"
+    print manage_person.listPersonsinGroup()
+
+    print personidpo['personId']
+    # result = manage_person.deletePerson(personidpo['personId'], GROUP)
+    # preventError(result)
+
+# main(TOTAL_PHOTOS, INTERVAL)
+clean()
+# test()
+
