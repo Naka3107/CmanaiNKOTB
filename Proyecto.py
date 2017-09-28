@@ -75,43 +75,43 @@ def main(limit, interval):
             #Se crea lista
             lista = (manage_person.listPersonsinGroup())
             preventError(lista)
-
+            print len(lista)
             #Añade al grupo el rostro si este no se encuentra en él
-        found = False
-        for i in range(0, len(lista), 1):
-            body = {}
-            body['personId'] = lista[i]['personId']
-            body['faceId'] = id
-            body['personGroupId'] = GROUP
-            js = json.dumps(body, sort_keys=True)
+            found = False
+            for i in range(0, len(lista), 1):
+                body = {}
+                body['personId'] = lista[i]['personId']
+                body['faceId'] = id
+                body['personGroupId'] = GROUP
+                js = json.dumps(body, sort_keys=True)
 
-            found = (compare_faces.verify(js)['isIdentical'])
-            preventError(found)
-            if found:
-                #Elimina del grupo a la persona que relacionó con el rostro
-                manage_person.deletePerson(body['personId'],GROUP)
-                break
+                found = (compare_faces.verify(js)['isIdentical'])
+                preventError(found)
+                if found:
+                    #Elimina del grupo a la persona que relacionó con el rostro
+                    manage_person.deletePerson(body['personId'],GROUP)
+                    break
 
-        personidpo = ''
-        if not found:
-            dataPerson = {}
-            dataPerson['name'] = "Debbie<3"
-            jsonpr = json.dumps(dataPerson)
-            personidpo = manage_person.createPerson(jsonpr)
-            preventError(personidpo)
-            print (personidpo['personId'])
-            image = {}
-            image['url'] = filename
-            # debbie = json.dumps(image)
-            result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', filename)
-            print result
-            preventError(result)
+            personidpo = ''
+            if not found:
+                dataPerson = {}
+                dataPerson['name'] = "Debbie<3"
+                jsonpr = json.dumps(dataPerson)
+                personidpo = manage_person.createPerson(jsonpr)
+                preventError(personidpo)
+                print (personidpo['personId'])
+                image = {}
+                image['url'] = filename
+                # debbie = json.dumps(image)
+                result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', filename)
+                print result
+                preventError(result)
 
 
     capture.release()
 
 def clean():
-    result = manage_person.deletePerson('188db044-6d63-4f4d-8be0-d5b4ed9fd9e1', GROUP)
+    result = manage_person.deletePerson('c3c4091d-1d64-41e6-93ef-0216846f638f', GROUP)
     preventError(result)
 
 def preventError(error):
@@ -147,7 +147,7 @@ def test():
     # result = manage_person.deletePerson(personidpo['personId'], GROUP)
     # preventError(result)
 
-#main(TOTAL_PHOTOS, INTERVAL)
-#clean()
-test()
+main(TOTAL_PHOTOS, INTERVAL)
+clean()
+#test()
 
