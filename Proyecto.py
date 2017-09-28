@@ -10,7 +10,7 @@ import compare_faces, detect_faces, manage_person
 
 # -----------------------------------------
 TOTAL_PHOTOS = 5                            # Fotos en memoria
-FperM = 10                                  # Fotos por minuto
+FperM = 20                                  # Fotos por minuto
 INTERVAL = 60 / FperM                       # Intervalo entre fotos
 GROUP = 'cmanai'
 # -----------------------------------------
@@ -21,7 +21,6 @@ imgPATH = PATH + "/Images/"
 vidPATH = PATH + "/Videos/"
 
 capture = cv2.VideoCapture(0)
-limitReached = False
 
 
 # Procesa Caras a partir de video
@@ -36,6 +35,7 @@ def main(limit, interval):
     while capture.isOpened():
 
         infoPhoto = ""
+
 
         # Current frame number
         delta = int(time.time()) - INITIAL
@@ -88,6 +88,8 @@ def main(limit, interval):
             found = (compare_faces.verify(js)['isIdentical'])
             preventError(found)
             if found:
+                #Elimina del grupo a la persona que relacionó con el rostro
+                manage_person.deletePerson(body['personId'],GROUP)
                 break
 
         personidpo = ''
@@ -102,13 +104,14 @@ def main(limit, interval):
             image['url'] = filename
             # debbie = json.dumps(image)
             result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', filename)
+            print result
             preventError(result)
 
 
     capture.release()
 
 def clean():
-    result = manage_person.deletePerson('e19a92c2-b186-44b5-9e0f-005aa9694aad', GROUP)
+    result = manage_person.deletePerson('188db044-6d63-4f4d-8be0-d5b4ed9fd9e1', GROUP)
     preventError(result)
 
 def preventError(error):
@@ -133,6 +136,8 @@ def test():
     preventError(personidpo)
 
     result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', imgPATH + "c2.jpg")
+    print "###########"
+    print result
     preventError(result)
 
     print "DESPUES"
@@ -142,7 +147,7 @@ def test():
     # result = manage_person.deletePerson(personidpo['personId'], GROUP)
     # preventError(result)
 
-# main(TOTAL_PHOTOS, INTERVAL)
-clean()
-# test()
+#main(TOTAL_PHOTOS, INTERVAL)
+#clean()
+test()
 
