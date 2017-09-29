@@ -38,12 +38,12 @@ def createPerson(body):
 
         # 'data' contains the JSON data. The following formats the JSON data for display.
         parsed = json.loads(data)
-        print ("<<CREATE PERSON>> Response:")
-        print (json.dumps(parsed, sort_keys=True, indent=2))
+        #print ("<<CREATE PERSON>> Response:")
+        #print (json.dumps(parsed, sort_keys=True, indent=2))
 
         # result = (json.dumps(parsed, sort_keys=True, indent=2))
 
-        print ("Se ha creado la persona")
+        print ("\n<<Se ha creado la persona>>")
         return parsed
         conn.close()
 
@@ -85,7 +85,7 @@ def listPersonsinGroup():
 
         # 'data' contains the JSON data. The following formats the JSON data for display.
         parsed = json.loads(data)
-        print ("<<LIST PERSON IN GROUP>> Response:")
+        print ("\n<<Lista de personas registradas>> Response:")
         print (json.dumps(parsed, sort_keys=True, indent=2))
 
         # result = (json.dumps(parsed, sort_keys=True, indent=2))
@@ -101,21 +101,21 @@ def listPersonsinGroup():
 def addPersonFace(person, group, body):
 
     try:
-        print "entra"
+        #print "entra"
         # Execute the REST API call and get the response.
         conn = httplib.HTTPSConnection('westcentralus.api.cognitive.microsoft.com')
         conn.request("POST", "/face/v1.0/persongroups/" + group + "/persons/" + person + "/persistedFaces?%s" % None,
                      body, headers)
-        print "manda"
+        #print "manda"
         response = conn.getresponse()
         data = response.read()
-        print "recibe"
+        #print "recibe"
 
         # 'data' contains the JSON data. The following formats the JSON data for display.
         parsed = json.loads(data)
-        print ("<<ADD PERSON FACE>> Response:")
+        #print ("<<ADD PERSON FACE>> Response:")
         print (json.dumps(parsed, sort_keys=True, indent=2))
-        print "Se asigno cara a la persona"
+        print "<<Se asigno cara a la persona>>"
         # result = (json.dumps(parsed, sort_keys=True, indent=2))
         return parsed
         # print ("Se ha agregado el grupo")

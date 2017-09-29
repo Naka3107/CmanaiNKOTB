@@ -40,7 +40,6 @@ def main(limit, interval):
 
         infoPhoto = ""
 
-
         # Current frame number
         delta = int(time.time()) - INITIAL
 
@@ -68,21 +67,22 @@ def main(limit, interval):
 
             # Otorga un face Id y respectivas caracteristicas del rostro
             while stuck:
+                print "\nAnálisis de cara: "
                 infoPhoto = detect_faces.readFace(filename)
                 preventError(infoPhoto)
+                print infoPhoto
             stuck = True
 
-            print "Análisis de cara: "
-            print infoPhoto
 
-        # *************************Procesamiento de imagen***********************************
+        #*************************Procesamiento de imagen***********************************
 
-            #Se asigna a Id la variable faceID
-
+        #
         if len(infoPhoto) > 0:
+            # Se asigna a Id la variable faceID
             id = infoPhoto[0]['faceId']
-            print "¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨"
+            print "\n<<Person ID asignado>>"
             print id
+
             #manage_person.addPersonFace(id, GROUP, filename)
 
             #Se crea lista
@@ -91,6 +91,7 @@ def main(limit, interval):
                 preventError(lista)
             stuck = True
 
+            print "\nPersonas registradas: "
             print len(lista)
             #Añade al grupo el rostro si este no se encuentra en él
             found = False
@@ -107,8 +108,10 @@ def main(limit, interval):
                 stuck = True
 
                 if found:
-                    #Elimina del grupo a la persona que relacionó con el rostro
+                    #Elimina del grupo a la persona que relacionó con el
+                    print "\n<<Se ha registrado salida del usario con ID:" + body['personId'] + ">>"
                     manage_person.deletePerson(body['personId'], GROUP)
+                    print "**********************************************************************************"
                     break
 
             if not found:
@@ -142,14 +145,16 @@ def main(limit, interval):
                     result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', img)
                     preventError(result)
                 stuck = True
-
-                print result
+                #print "*******Peristed face ID:*********"
+                #print result
+                print "\n<<Se ha resigistrado persona en el edificio>>\n\n\n"
+                print "\n*******************************************************************************************"
 
 
     capture.release()
 
 def clean():
-    result = manage_person.deletePerson('6666e429-3577-430c-aecb-4e123b854864', GROUP)
+    result = manage_person.deletePerson('8f65e0e7-29bb-45a9-8e87-d78492ded7d9', GROUP)
     preventError(result)
 
 def print_list():
@@ -158,11 +163,11 @@ def print_list():
 def preventError(error):
     global stuck
 
-    print ">>>>>>>>>>>>>>>>>>>>> "
-    print error
+    #print ">>>>>>>>>>>>>>>>>>>>> "
+    #print error
 
     try:
-        print error['error']
+        #print error['error']
         message = error['error']['message']
 
         if message == 'Rate limit is exceeded. Try again later.':
@@ -170,10 +175,10 @@ def preventError(error):
             time.sleep(60)
             stuck = True
     except Exception as e:
-        print "Respuesta dentro del limite"
+        #print "Respuesta dentro del limite"
         stuck = False
 
 main(TOTAL_PHOTOS, INTERVAL)
-# clean()
-# print_list()
+#clean()
+#print_list()
 

@@ -23,8 +23,8 @@ def verify(body):
 
         # 'data' contains the JSON data. The following formats the JSON data for display.
         parsed = json.loads(data)
-        print ("<<VERIFY>> Response:")
-        print (json.dumps(parsed, sort_keys=True, indent=2))
+        #print ("<<VERIFY>> Response:")
+        #print (json.dumps(parsed, sort_keys=True, indent=2))
 
         return parsed
         # result = (json.dumps(parsed, sort_keys=True, indent=2))
