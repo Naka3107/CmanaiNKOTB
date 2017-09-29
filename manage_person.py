@@ -22,7 +22,6 @@ listparams = urllib.urlencode({
     'top': '1000'
 })
 
-
 getpersonparams = urllib.urlencode({
     'personGroupId' : 'cmanai'
     #'personId': '30d01b70-e147-4a3a-b77b-37a15c44ece7'
@@ -98,7 +97,7 @@ def listPersonsinGroup():
         print("[Errno {0}] {1}".format(e.message, e.args))
 
 
-def addPersonFace(person, group, path):
+def addPersonFace(person, group, path, paramsAdd):
 
     filename = path
     f = open(filename, "rb")
@@ -110,7 +109,7 @@ def addPersonFace(person, group, path):
         print "entra"
         # Execute the REST API call and get the response.
         conn = httplib.HTTPSConnection('westcentralus.api.cognitive.microsoft.com')
-        conn.request("POST", "/face/v1.0/persongroups/" + group + "/persons/" + person + "/persistedFaces?%s" % params,
+        conn.request("POST", "/face/v1.0/persongroups/" + group + "/persons/" + person + "/persistedFaces?%s" % paramsAdd,
                      body, detect_faces.headers)
         print "manda"
         response = conn.getresponse()

@@ -63,11 +63,11 @@ def main(limit, interval):
             print "Análisis de cara: "
             print infoPhoto
 
-        # *************************Procesamiento de imagen***********************************
+        # ********************Procesamiento de imagen****************************************
 
-            #Se asigna a Id la variable faceID
-
+        #Verifica que haya reconocido rostro
         if len(infoPhoto) > 0:
+            # Se asigna a Id la variable faceID
             id = infoPhoto[0]['faceId']
             print "¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨"
             print id
@@ -89,22 +89,24 @@ def main(limit, interval):
                 preventError(found)
                 if found:
                     #Elimina del grupo a la persona que relacionó con el rostro
-                    manage_person.deletePerson(body['personId'], GROUP)
+                    manage_person.deletePerson(body['personId'],GROUP)
                     break
 
             personidpo = ''
             if not found:
                 dataPerson = {}
-                dataPerson['name'] = "Debbie<3"
+                dataPerson['name'] = "Vikander"
                 jsonpr = json.dumps(dataPerson)
                 personidpo = manage_person.createPerson(jsonpr)
                 preventError(personidpo)
                 print (personidpo['personId'])
                 image = {}
-                image['url'] = 'https://pixel.nymag.com/imgs/daily/vulture/2017/06/20/20-gal-gadot.w710.h473.jpg'
-                img = json.dumps(image)
+                image['url'] = filename
                 # debbie = json.dumps(image)
-                result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', img)
+                paramsAdd = {}
+                paramsAdd['personGroupId'] = GROUP
+                paramsAdd['personId'] = personidpo['personId']
+                result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', filename, paramsAdd)
                 print result
                 preventError(result)
 
@@ -112,7 +114,7 @@ def main(limit, interval):
     capture.release()
 
 def clean():
-    result = manage_person.deletePerson('41082598-041b-41eb-8e12-3a227914b977', GROUP)
+    result = manage_person.deletePerson('c3c4091d-1d64-41e6-93ef-0216846f638f', GROUP)
     preventError(result)
 
 def print_list():
@@ -152,7 +154,7 @@ def test():
     # preventError(result)
 
 #main(TOTAL_PHOTOS, INTERVAL)
-# clean()
+#clean()
 print_list()
 #test()
 
