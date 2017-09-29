@@ -22,6 +22,7 @@ listparams = urllib.urlencode({
     'top': '1000'
 })
 
+
 getpersonparams = urllib.urlencode({
     'personGroupId' : 'cmanai'
     #'personId': '30d01b70-e147-4a3a-b77b-37a15c44ece7'
@@ -97,20 +98,14 @@ def listPersonsinGroup():
         print("[Errno {0}] {1}".format(e.message, e.args))
 
 
-def addPersonFace(person, group, path, paramsAdd):
-
-    filename = path
-    f = open(filename, "rb")
-    body = f.read()
-
-    f.close()
+def addPersonFace(person, group, body):
 
     try:
         print "entra"
         # Execute the REST API call and get the response.
         conn = httplib.HTTPSConnection('westcentralus.api.cognitive.microsoft.com')
-        conn.request("POST", "/face/v1.0/persongroups/" + group + "/persons/" + person + "/persistedFaces?%s" % paramsAdd,
-                     body, detect_faces.headers)
+        conn.request("POST", "/face/v1.0/persongroups/" + group + "/persons/" + person + "/persistedFaces?%s" % None,
+                     body, headers)
         print "manda"
         response = conn.getresponse()
         data = response.read()
@@ -138,9 +133,12 @@ def deletePerson(person, group):
         response = conn.getresponse()
         data = response.read()
 
-        print(data)
+        # 'data' contains the JSON data. The following formats the JSON data for display.
+        parsed = json.loads(data)
+
         conn.close()
         print("Borrado")
+        return parsed
 
     except Exception as e:
         print("[Errno {0}] {1}".format(e.message, e.args))
