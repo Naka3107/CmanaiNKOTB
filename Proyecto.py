@@ -4,9 +4,10 @@
 #pip install vc2
 #pip install pillow
 
-import cv2, os, inspect, time, json
+import cv2, os, inspect, time, json, io
+from PIL import Image
 # LOCAL
-import compare_faces, detect_faces, manage_person
+import compare_faces, detect_faces, manage_person, blob_storage
 
 # -----------------------------------------
 TOTAL_PHOTOS = 5                            # Fotos en memoria
@@ -14,6 +15,9 @@ FperM = 20                                  # Fotos por minuto
 INTERVAL = 60 / FperM                       # Intervalo entre fotos
 GROUP = 'cmanai'
 # -----------------------------------------
+
+global stuck
+stuck = True
 
 PATH = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 PATH = PATH.replace('\\', '/')
@@ -53,13 +57,21 @@ def main(limit, interval):
         # ***************************Analisis de imagen**************************************
 
             # Otorga un nombre de archivo
-            filename = imgPATH + "image_" + str(delta / interval) + ".jpg"
+            picName = "image_" + str(delta / interval) + ".jpg"
+            filename = imgPATH + picName
             cv2.imwrite(filename, frame)
             print "Fotografía guardada en: " + filename
 
+            # Sube la foto a AZURE
+            # ASEGURARSE QUE EL NOMBRE INCLUYE .jpg
+            blob_storage.uploadImage(picName, picName)
+
             # Otorga un face Id y respectivas caracteristicas del rostro
+            # while stuck:
             infoPhoto = detect_faces.readFace(filename)
             preventError(infoPhoto)
+            # stuck = True
+
             print "Análisis de cara: "
             print infoPhoto
 
@@ -72,9 +84,13 @@ def main(limit, interval):
             print "¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨"
             print id
             #manage_person.addPersonFace(id, GROUP, filename)
+
             #Se crea lista
+            # while stuck:
             lista = (manage_person.listPersonsinGroup())
             preventError(lista)
+            # stuck = True
+
             print len(lista)
             #Añade al grupo el rostro si este no se encuentra en él
             found = False
@@ -85,34 +101,54 @@ def main(limit, interval):
                 body['personGroupId'] = GROUP
                 js = json.dumps(body, sort_keys=True)
 
+                # while stuck:
                 found = (compare_faces.verify(js)['isIdentical'])
                 preventError(found)
+                # stuck = True
+
                 if found:
                     #Elimina del grupo a la persona que relacionó con el rostro
                     manage_person.deletePerson(body['personId'], GROUP)
                     break
 
-            personidpo = ''
             if not found:
                 dataPerson = {}
-                dataPerson['name'] = "Debbie<3"
+                dataPerson['name'] = "anonymus"
                 jsonpr = json.dumps(dataPerson)
+
+                # while stuck:
                 personidpo = manage_person.createPerson(jsonpr)
                 preventError(personidpo)
+                # stuck = True
+
                 print (personidpo['personId'])
+
                 image = {}
-                image['url'] = 'https://pixel.nymag.com/imgs/daily/vulture/2017/06/20/20-gal-gadot.w710.h473.jpg'
+                image['url'] = blob_storage.URL + picName
                 img = json.dumps(image)
-                # debbie = json.dumps(image)
+
+                # img = Image.open(filename, mode='r')
+                #
+                # imgByteArr = io.BytesIO()
+                # img.save(imgByteArr, format='PNG')
+                # imgByteArr = imgByteArr.getvalue()
+
+                # f = open(filename, "rb")
+                # body = f.read()
+
+                # f.close()
+
+                # while stuck:
                 result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', img)
-                print result
                 preventError(result)
+                # stuck = True
+                print result
 
 
     capture.release()
 
 def clean():
-    result = manage_person.deletePerson('41082598-041b-41eb-8e12-3a227914b977', GROUP)
+    result = manage_person.deletePerson('6666e429-3577-430c-aecb-4e123b854864', GROUP)
     preventError(result)
 
 def print_list():
@@ -120,13 +156,21 @@ def print_list():
 
 def preventError(error):
 
+    print "Check for error >>"
+    print error
+
     try:
+        print "xxxxxxxxxxxxxxxxxxxxxx"
+        print error['error']
         message = error['error']['message']
 
         if message == 'Rate limit is exceeded. Try again later.':
-            time.sleep(30)
+            print "Wait 1 minute (DEMO version)"
+            time.sleep(60)
+            stuck = True
     except Exception as e:
-        print "Respuesta sin error"
+        print "Respuesta dentro del limite"
+        stuck = False
 
 def test():
 
@@ -151,8 +195,8 @@ def test():
     # result = manage_person.deletePerson(personidpo['personId'], GROUP)
     # preventError(result)
 
-#main(TOTAL_PHOTOS, INTERVAL)
+main(TOTAL_PHOTOS, INTERVAL)
 # clean()
-print_list()
+# print_list()
 #test()
 
