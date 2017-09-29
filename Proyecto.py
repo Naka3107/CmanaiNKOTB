@@ -11,12 +11,11 @@ import compare_faces, detect_faces, manage_person, blob_storage
 
 # -----------------------------------------
 TOTAL_PHOTOS = 5                            # Fotos en memoria
-FperM = 20                                  # Fotos por minuto
+FperM = 10                                  # Fotos por minuto
 INTERVAL = 60 / FperM                       # Intervalo entre fotos
 GROUP = 'cmanai'
 # -----------------------------------------
 
-global stuck
 stuck = True
 
 PATH = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -29,6 +28,7 @@ capture = cv2.VideoCapture(0)
 
 # Procesa Caras a partir de video
 def main(limit, interval):
+    global stuck
 
     limit -= 1
 
@@ -67,10 +67,10 @@ def main(limit, interval):
             blob_storage.uploadImage(picName, picName)
 
             # Otorga un face Id y respectivas caracteristicas del rostro
-            # while stuck:
-            infoPhoto = detect_faces.readFace(filename)
-            preventError(infoPhoto)
-            # stuck = True
+            while stuck:
+                infoPhoto = detect_faces.readFace(filename)
+                preventError(infoPhoto)
+            stuck = True
 
             print "Análisis de cara: "
             print infoPhoto
@@ -86,10 +86,10 @@ def main(limit, interval):
             #manage_person.addPersonFace(id, GROUP, filename)
 
             #Se crea lista
-            # while stuck:
-            lista = (manage_person.listPersonsinGroup())
-            preventError(lista)
-            # stuck = True
+            while stuck:
+                lista = (manage_person.listPersonsinGroup())
+                preventError(lista)
+            stuck = True
 
             print len(lista)
             #Añade al grupo el rostro si este no se encuentra en él
@@ -101,10 +101,10 @@ def main(limit, interval):
                 body['personGroupId'] = GROUP
                 js = json.dumps(body, sort_keys=True)
 
-                # while stuck:
-                found = (compare_faces.verify(js)['isIdentical'])
-                preventError(found)
-                # stuck = True
+                while stuck:
+                    found = (compare_faces.verify(js)['isIdentical'])
+                    preventError(found)
+                stuck = True
 
                 if found:
                     #Elimina del grupo a la persona que relacionó con el rostro
@@ -116,10 +116,10 @@ def main(limit, interval):
                 dataPerson['name'] = "anonymus"
                 jsonpr = json.dumps(dataPerson)
 
-                # while stuck:
-                personidpo = manage_person.createPerson(jsonpr)
-                preventError(personidpo)
-                # stuck = True
+                while stuck:
+                    personidpo = manage_person.createPerson(jsonpr)
+                    preventError(personidpo)
+                stuck = True
 
                 print (personidpo['personId'])
 
@@ -138,10 +138,11 @@ def main(limit, interval):
 
                 # f.close()
 
-                # while stuck:
-                result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', img)
-                preventError(result)
-                # stuck = True
+                while stuck:
+                    result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', img)
+                    preventError(result)
+                stuck = True
+
                 print result
 
 
@@ -155,48 +156,24 @@ def print_list():
     manage_person.listPersonsinGroup()
 
 def preventError(error):
+    global stuck
 
-    print "Check for error >>"
+    print ">>>>>>>>>>>>>>>>>>>>> "
     print error
 
     try:
-        print "xxxxxxxxxxxxxxxxxxxxxx"
         print error['error']
         message = error['error']['message']
 
         if message == 'Rate limit is exceeded. Try again later.':
-            print "Wait 1 minute (DEMO version)"
+            print "Waiting for 1 minute... (DEMO version)"
             time.sleep(60)
             stuck = True
     except Exception as e:
         print "Respuesta dentro del limite"
         stuck = False
 
-def test():
-
-    print "ANTES"
-    print manage_person.listPersonsinGroup()
-
-    dataPerson = {}
-    dataPerson['name'] = "TEST"
-    jsonpr = json.dumps(dataPerson)
-    personidpo = manage_person.createPerson(jsonpr)
-    preventError(personidpo)
-
-    result = manage_person.addPersonFace(personidpo['personId'], 'cmanai', imgPATH + "c2.jpg")
-    print "###########"
-    print result
-    preventError(result)
-
-    print "DESPUES"
-    print manage_person.listPersonsinGroup()
-
-    print personidpo['personId']
-    # result = manage_person.deletePerson(personidpo['personId'], GROUP)
-    # preventError(result)
-
 main(TOTAL_PHOTOS, INTERVAL)
 # clean()
 # print_list()
-#test()
 
